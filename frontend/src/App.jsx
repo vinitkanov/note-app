@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "./components/navbar.jsx";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -26,7 +27,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen flex flex-col mt-24 items-center">
+      <main className="min-h-screen flex flex-col items-center bg-gray-100 pt-24">
         <NoteForm onAddNote={addNote} />
         <NoteList
           notes={notes}
@@ -43,16 +44,6 @@ export default App;
 
 // ================== Komponen ==================
 
-const Navbar = () => {
-  return (
-    <nav className="w-full fixed top-0 flex justify-center bg-white shadow">
-      <div className="flex justify-between px-5 py-5 container">
-        <img src="/logo.svg" alt="Logo" />
-      </div>
-    </nav>
-  );
-};
-
 const NoteForm = ({ onAddNote }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -65,7 +56,7 @@ const NoteForm = ({ onAddNote }) => {
   };
 
   return (
-    <section className="container max-w-xl px-5 mb-8">
+    <section className="container max-w-xl px-5 mb-8 border-1 rounded-lg p-6 bg-white border-gray-200">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
@@ -84,7 +75,7 @@ const NoteForm = ({ onAddNote }) => {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white font-semibold rounded-lg py-3"
+          className="bg-blue-500 text-white font-semibold rounded-lg py-3 hover:bg-blue-600 transition-colors active:bg-blue-700"
         >
           Add note
         </button>
@@ -119,10 +110,10 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
 
 const NoteList = ({ notes }) => {
   return (
-    <section className="container py-8">
+    <section className="container py-8 mt-42">
       <h2 className="inline-flex items-center gap-2 text-2xl font-medium mb-6">
-        <img src="/note.svg" alt="note icon" className="w-8 h-8" />
-        Notes
+        <img src="/note.svg" alt="note icon" className="w-8 h-8" draggable="false" />
+        My Notes
       </h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {notes.length > 0 ? (
@@ -133,7 +124,7 @@ const NoteList = ({ notes }) => {
       </div>
     </section>
   );
-};
+};  
 
 // helper
 const showFormattedDate = (date) => {
