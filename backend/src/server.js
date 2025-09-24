@@ -6,6 +6,7 @@ import noteRouter from './routes/notesRoute.js';
 const app = express();
 const port = 3000;
 
+app.use(express.json())
 
 app.use("/", helloRouter)
 app.use(noteRouter)
