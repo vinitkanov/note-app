@@ -33,3 +33,18 @@ export const getNoteByIdHandler = async (req, res) => {
         data: notes[0]
     })
 }
+
+export const updateNoteByIdHandler = async (req, res) => {
+    const { id } = req.params;
+    const { title, content } = req.body;
+
+    await pool.query("UPDATE notes SET title=?, content=? WHERE id=?", [title, content, id])
+
+    const [notes] = await pool.query("SELECT * FROM notes WHERE id=?", [id])
+ 
+    res.status(200).json({
+        status: "success",
+        message:"Note update successfully",
+        data: notes[0]
+    })
+}
