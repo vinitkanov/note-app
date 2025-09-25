@@ -12,6 +12,21 @@ export const getAllNotesHandler = async (req, res) => {
 
 export const addNoteHandler = async (req, res) => {
     const {title, content} = req.body
+
+    if(!title || !title.trim()) {
+        return res.status(400).json({
+            status: "fail",
+            message: "Title is required"
+        })}
+
+    if(!content || !content.trim()) {
+        return res.status(400).json({
+            status: "fail",
+            message:"content is required"
+        })
+    }
+
+    } 
     const [insertResult] = await pool.query(
         "INSERT INTO notes (title, content) VALUES (?, ?)",
         [title, content]
@@ -21,7 +36,7 @@ export const addNoteHandler = async (req, res) => {
         status: "success",
         message: "Note created"
     })
-}
+
 
 export const getNoteByIdHandler = async (req, res) => {
     const { id } = req.params
@@ -35,12 +50,33 @@ export const getNoteByIdHandler = async (req, res) => {
 }
 
 export const updateNoteByIdHandler = async (req, res) => {
+
     const { id } = req.params;
     const { title, content } = req.body;
 
-    await pool.query("UPDATE notes SET title=?, content=? WHERE id=?", [title, content, id])
+    if(!title || !title.trim()) {
+        return res.status(400).json({
+            status: "fail",
+            message: "Title is required"
+        })}
+
+    if(!content || !content.trim()) {
+        return res.status(400).json({
+            status: "fail",
+            message:"content is required"
+        })
+    }
 
     const [notes] = await pool.query("SELECT * FROM notes WHERE id=?", [id])
+
+    if(notes.length === 0) {
+        return res.status(400).json({
+            status: "fail",
+            message: "Note not found"
+        })
+    }
+
+    await pool.query("UPDATE notes SET title=?, content=? WHERE id=?", [title, content, id])
  
     res.status(200).json({
         status: "success",
