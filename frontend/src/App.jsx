@@ -1,13 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/navbar.jsx";
+import axios from "axios";
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const fetchNotes = async () => {
+    console.log("fetching notes...")
+    try {
+      const response = await fetch("http://localhost:3000/notes")
+      const data = await response.json()
+      setNotes(data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  } 
+  useEffect(() => {
+    fetchNotes()
+  }, [])
 
-  const addNote = (title, content) => {
-    console.log(title);
-    console.log(content);
-    setNotes([]);
+  const addNote = async (newTitle, newContent) => {
+    try {
+      const response = await axios.post("http://localhost:3000/notes", {
+        title: newTitle,
+        content: newContent
+      })
+      const result = response.data
+      if(result.ok) {
+        setNotes([...notes, result.data])
+      }
+      fetchNotes()
+   } catch(error) {
+      console.log(error); 
+    }
   };
 
   const handleDelete = (id) => {
@@ -23,6 +47,8 @@ function App() {
     console.log(newTitle);
     console.log(newContent);
   };
+
+  
 
   return (
     <>
@@ -85,16 +111,31 @@ const NoteForm = ({ onAddNote }) => {
 };
 
 const NoteItem = ({ note, onDelete, onUpdate }) => {
+  const [isEditing, setIsEditing] = useState(false);
   console.log(note);
   console.log(onDelete);
   console.log(onUpdate);
 
   return (
-    <div className="rounded-lg shadow-md bg-white w-[300px] p-5">
+    <div className="rounded-lg bg-white w-[300px] p-5 border border-gray-200">
+
+      {/* edit mode */}
+      {isEditing ? <><input type="text" className="w-full rounded-sm outline outline-gray-400 p-2" />
+      <textarea type="text" className="w-full rounded-sm outline outline-gray-400 p-2 mt-2" />
+      <div className="mt-4 flex gap-2">
+        <button className="bg-red-500 text-white px-3 py-1 rounded">
+          Cancel
+        </button>
+        <button className="bg-green-500 text-white px-3 py-1 rounded">
+          Accept
+        </button>
+      </div>
+</> : <> {/*View mode*/}
       <p className="font-medium text-xl">{note.title}</p>
       <p className="text-sm text-gray-500">
-        ~{showFormattedDate(note.createAt)}
+        {showFormattedDate(note.created_at)}
       </p>
+
       <p className="mt-2">{note.content}</p>
       <div className="mt-4 flex gap-2">
         <button className="bg-yellow-500 text-white px-3 py-1 rounded">
@@ -103,7 +144,7 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
         <button className="bg-red-500 text-white px-3 py-1 rounded">
           Delete
         </button>
-      </div>
+      </div></>}
     </div>
   );
 };

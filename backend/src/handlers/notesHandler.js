@@ -26,7 +26,7 @@ export const addNoteHandler = async (req, res) => {
         })
     }
 
-    } 
+    
     const [insertResult] = await pool.query(
         "INSERT INTO notes (title, content) VALUES (?, ?)",
         [title, content]
@@ -36,7 +36,7 @@ export const addNoteHandler = async (req, res) => {
         status: "success",
         message: "Note created"
     })
-
+}
 
 export const getNoteByIdHandler = async (req, res) => {
     const { id } = req.params
@@ -82,5 +82,24 @@ export const updateNoteByIdHandler = async (req, res) => {
         status: "success",
         message:"Note update successfully",
         data: notes[0]
+    })
+}
+
+export const deleteNoteByIdHandler = async (req, res) => {
+    const { id } = req.params;
+    const [notes] = await pool.query("SELECT * FROM notes WHERE id=?", [id])
+
+    if(notes.length === 0) {
+        return res.status(400).json({
+            status: "fail",
+            message: "Note not found"
+        })
+    }
+
+    await pool.query("DELETE FROM notes WHERE id=?", [id])
+
+    res.status(200).json({
+        status: "success",
+        message: "Note deleted successfully"
     })
 }
