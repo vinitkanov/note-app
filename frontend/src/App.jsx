@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Navbar from "./components/navbar.jsx";
 import axios from "axios";
+import { Textarea } from "./components/ui/textarea"
+import { Input } from "@/components/ui/Input"
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -61,8 +63,19 @@ function App() {
     }
   };
 
-  const handleDelete = (id) => {
-    console.log(id);
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3000/notes/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setNotes(notes.filter((note) => note.id !== id));
+        alert("Note deleted successfully");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getNoteById = (id) => {
@@ -72,7 +85,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen flex flex-col items-center bg-gray-100 pt-24">
+      <main className="min-h-screen flex flex-col items-center bg-gray-100 pt-40 p-10">
         <NoteForm onAddNote={addNote} />
         <NoteList
           notes={notes}
@@ -103,7 +116,7 @@ const NoteForm = ({ onAddNote }) => {
   return (
     <section className="container max-w-xl px-5 mb-8 border-1 rounded-lg p-6 bg-white border-gray-200">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
+        <Input
           type="text"
           placeholder="Title"
           className="rounded-sm outline outline-gray-400 p-3"
@@ -111,7 +124,7 @@ const NoteForm = ({ onAddNote }) => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <textarea
+        <Textarea
           placeholder="Content"
           className="resize-y min-h-14 rounded-sm outline outline-gray-400 p-3"
           required
@@ -138,22 +151,19 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
     setEditedTitle(note.title);
     setEditedContent(note.content);
   };
-  console.log(note);
-  console.log(onDelete);
-  console.log(onUpdate);
 
   return (
     <div className="rounded-lg bg-white w-[300px] p-5 border border-gray-200">
       {/* edit mode */}
       {isEditing ? (
         <>
-          <input
+          <Input
             type="text"
             className="w-full rounded-sm outline outline-gray-400 p-2"
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
           />
-          <textarea
+          <Textarea
             type="text"
             className="w-full rounded-sm outline outline-gray-400 p-2 mt-2"
             value={editedContent}
@@ -161,14 +171,14 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
           />
           <div className="mt-4 flex gap-2">
             <button
-              className="bg-red-500 text-white px-3 py-1 rounded"
+              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
               onClick={handleCancel}
             >
               Cancel
             </button>
             <button
-              className="bg-green-500 text-white px-3 py-1 rounded"
-              onClick={() => 
+              className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 active:bg-green-700"
+              onClick={() =>
                 onUpdate(note.id, editedTitle, editedContent)
                   .then(() => setIsEditing(false))
                   .catch((err) => console.error(err))
@@ -189,12 +199,15 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
           <p className="mt-2">{note.content}</p>
           <div className="mt-4 flex gap-2">
             <button
-              className="bg-yellow-500 text-white px-3 py-1 rounded"
+              className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 active:bg-yellow-700"
               onClick={() => setIsEditing(true)}
             >
               Edit
             </button>
-            <button className="bg-red-500 text-white px-3 py-1 rounded">
+            <button
+              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
+              onClick={() => onDelete(note.id)}
+            >
               Delete
             </button>
           </div>
@@ -204,7 +217,7 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
   );
 };
 
-const NoteList = ({ notes, onUpdate }) => {
+const NoteList = ({ notes, onUpdate, onDelete }) => {
   return (
     <section className="container py-8 mt-42">
       <h2 className="inline-flex items-center gap-2 text-2xl font-medium mb-6">
@@ -214,15 +227,20 @@ const NoteList = ({ notes, onUpdate }) => {
           className="w-8 h-8"
           draggable="false"
         />
-        My Notes
+        Saved Notes
       </h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {notes.length > 0 ? (
           notes.map((note) => (
-            <NoteItem key={note.id} note={note} onUpdate={onUpdate} />
+            <NoteItem
+              key={note.id}
+              note={note}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+            />
           ))
         ) : (
-          <h1>Data Kosong</h1>
+          <h1>There is no data, you can make new one!</h1>
         )}
       </div>
     </section>
