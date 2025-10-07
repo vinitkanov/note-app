@@ -97,18 +97,22 @@ function App() {
     <>
       <Navbar />
       <main className="min-h-screen flex flex-col items-center bg-gray-100 pt-40 p-10">
-        <NoteForm onAddNote={addNote} />
 
         {/* ✨ Add Search Input */}
-        <div className="mb-6 w-full max-w-xl">
+        <div className="mb-28 w-full max-w-xl">
           <Input
             type="text"
             placeholder="Search notes..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="rounded-sm outline outline-gray-400 p-3"
+            className="bg-white rounded-sm outline outline-gray-400 p-3"
           />
         </div>
+
+
+        <NoteForm onAddNote={addNote} />
+
+        
 
         {/* Use filteredNotes instead of notes */}
         <NoteList
