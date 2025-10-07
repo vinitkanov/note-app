@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/Input"
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const baseURL = "https://notes-app-backend-pied.vercel.app/"
   const fetchNotes = async () => {
     console.log("fetching notes...");
     try {
-      const response = await fetch("http://localhost:3000/notes");
+      const response = await fetch(`${baseURL}/notes`);
       const data = await response.json();
       setNotes(data.data);
     } catch (error) {
@@ -22,7 +23,7 @@ function App() {
 
   const addNote = async (newTitle, newContent) => {
     try {
-      const response = await axios.post("http://localhost:3000/notes", {
+      const response = await axios.post(`${baseURL}/notes`, {
         title: newTitle,
         content: newContent,
       });
@@ -39,7 +40,7 @@ function App() {
   const updateNote = async (id, updateTitle, updateContent) => {
     try {
       const response = async () => {
-        const response = await fetch(`http://localhost:3000/notes/${id}`, {
+        const response = await fetch(`${baseURL}/notes/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -65,7 +66,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3000/notes/${id}`, {
+      const response = await fetch(`${baseURL}/notes/${id}`, {
         method: "DELETE",
       });
 
