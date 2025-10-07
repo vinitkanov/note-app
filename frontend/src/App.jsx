@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "./components/navbar.jsx";
 import axios from "axios";
 import { Textarea } from "./components/ui/textarea"
-import { Input } from "@/components/ui/Input"
+import { Input } from "@/components/ui/input.jsx"
 
 function App() {
   const [notes, setNotes] = useState([]);
