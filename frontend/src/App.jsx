@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input.jsx"
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const [query, setQuery] = useState("");
+  const [filteredNotes, setFilteredNotes] = useState([]);
+
   const baseURL = "https://notes-app-backend-pied.vercel.app"
   const fetchNotes = async () => {
     console.log("fetching notes...");
@@ -13,6 +16,8 @@ function App() {
       const response = await fetch(`${baseURL}/notes`);
       const data = await response.json();
       setNotes(data.data);
+      setFilteredNotes(data.data); // initial set
+
     } catch (error) {
       console.log(error);
     }
@@ -21,6 +26,11 @@ function App() {
     fetchNotes();
   }, []);
 
+    useEffect(() => {
+    const results = noteSearch(notes, query);
+    setFilteredNotes(results);
+  }, [query, notes]);
+  
   const addNote = async (newTitle, newContent) => {
     try {
       const response = await axios.post(`${baseURL}/notes`, {
@@ -88,8 +98,21 @@ function App() {
       <Navbar />
       <main className="min-h-screen flex flex-col items-center bg-gray-100 pt-40 p-10">
         <NoteForm onAddNote={addNote} />
+
+        {/* ✨ Add Search Input */}
+        <div className="mb-6 w-full max-w-xl">
+          <Input
+            type="text"
+            placeholder="Search notes..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="rounded-sm outline outline-gray-400 p-3"
+          />
+        </div>
+
+        {/* Use filteredNotes instead of notes */}
         <NoteList
-          notes={notes}
+          notes={filteredNotes}
           onDelete={handleDelete}
           onUpdate={updateNote}
           onGetById={getNoteById}
@@ -258,3 +281,14 @@ const showFormattedDate = (date) => {
   };
   return new Date(date).toLocaleDateString("id-ID", options);
 };
+
+const noteSearch = (notes, query) => {
+  return notes.filter((note) => {
+    return(
+      note.title.toLowerCase().includes(query.toLowerCase()) ||
+      note.content.toLowerCase().includes(query.toLowerCase()) ||
+      showFormattedDate(note.created_at).toLowerCase().includes(query.toLowerCase())
+    )
+  })
+}
+

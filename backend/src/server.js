@@ -9,6 +9,7 @@ const port = 3000;
 
 app.use(cors({
     origin: 'https://note-app-main-eight.vercel.app', 
+    
     credentials: true
 }));
 
