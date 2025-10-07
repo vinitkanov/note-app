@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input.jsx"
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const baseURL = "https://notes-app-backend-pied.vercel.app/"
+  const baseURL = "https://notes-app-backend-pied.vercel.app"
   const fetchNotes = async () => {
     console.log("fetching notes...");
     try {
