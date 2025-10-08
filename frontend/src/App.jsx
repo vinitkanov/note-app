@@ -196,14 +196,14 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
           />
           <div className="mt-4 flex gap-2">
             <button
-              className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
+              className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700 flex"
               onClick={handleCancel}
             >
               <Ban className="text-white"/>
               Cancel
             </button>
             <button
-              className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-600 active:bg-green-700"
+              className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-600 active:bg-green-700 flex"
               onClick={() =>
                 onUpdate(note.id, editedTitle, editedContent)
                   .then(() => setIsEditing(false))
@@ -226,14 +226,14 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
           <p className="mt-2">{note.content}</p>
           <div className="mt-4 flex gap-2">
             <button
-              className="bg-yellow-700 text-white px-3 py-1 rounded hover:bg-yellow-600 active:bg-yellow-700"
+              className="bg-yellow-700 text-white px-3 py-1 rounded hover:bg-yellow-600 active:bg-yellow-700 flex"
               onClick={() => setIsEditing(true)}
             >
               <Pencil className="text-white"/>
               Edit
             </button>
             <button
-              className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
+              className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700 flex"
               onClick={() => onDelete(note.id)}
             >
               <Trash className="text-white"/>
