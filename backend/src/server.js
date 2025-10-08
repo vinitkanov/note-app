@@ -8,9 +8,10 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-    origin: 'https://note-app-main-eight.vercel.app', 
-    
-    credentials: true
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://note-app-main-eight.vercel.app'
+    : '*',  // Allows all origins in development
+  credentials: true
 }));
 
 app.use(express.json())

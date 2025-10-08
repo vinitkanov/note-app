@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import Navbar from "./components/navbar.jsx";
 import axios from "axios";
-import { Textarea } from "./components/ui/textarea"
-import { Input } from "@/components/ui/input.jsx"
+import { Textarea } from "./components/ui/textarea";
+import { Input } from "@/components/ui/input.jsx";
+import { Search, NotebookPen, Ban, SaveAll, Pencil, Trash   } from "lucide-react";
 
 function App() {
   const [notes, setNotes] = useState([]);
   const [query, setQuery] = useState("");
   const [filteredNotes, setFilteredNotes] = useState([]);
 
-  const baseURL = "https://notes-app-backend-pied.vercel.app"
+  const baseURL = "https://notes-app-backend-pied.vercel.app";
   const fetchNotes = async () => {
     console.log("fetching notes...");
     try {
@@ -17,7 +18,6 @@ function App() {
       const data = await response.json();
       setNotes(data.data);
       setFilteredNotes(data.data); // initial set
-
     } catch (error) {
       console.log(error);
     }
@@ -26,11 +26,11 @@ function App() {
     fetchNotes();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     const results = noteSearch(notes, query);
     setFilteredNotes(results);
   }, [query, notes]);
-  
+
   const addNote = async (newTitle, newContent) => {
     try {
       const response = await axios.post(`${baseURL}/notes`, {
@@ -97,22 +97,19 @@ function App() {
     <>
       <Navbar />
       <main className="min-h-screen flex flex-col items-center bg-gray-100 pt-40 p-10">
-
         {/* ✨ Add Search Input */}
-        <div className="mb-28 w-full max-w-xl">
+        <div className="mb-28 w-full max-w-xl flex items-center gap-3 bg-white rounded-xl outline outline-gray-200 p-3">
+          <Search />
           <Input
             type="text"
             placeholder="Search notes..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-white rounded-sm outline outline-gray-400 p-3"
+            className="p-3"
           />
         </div>
 
-
         <NoteForm onAddNote={addNote} />
-
-        
 
         {/* Use filteredNotes instead of notes */}
         <NoteList
@@ -161,7 +158,7 @@ const NoteForm = ({ onAddNote }) => {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white font-semibold rounded-lg py-3 hover:bg-blue-600 transition-colors active:bg-blue-700"
+          className="bg-black text-white font-semibold rounded-lg py-3 hover:bg-gray-900 active:bg-gray-800"
         >
           Add note
         </button>
@@ -199,19 +196,21 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
           />
           <div className="mt-4 flex gap-2">
             <button
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
+              className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
               onClick={handleCancel}
             >
+              <Ban className="text-white"/>
               Cancel
             </button>
             <button
-              className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 active:bg-green-700"
+              className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-600 active:bg-green-700"
               onClick={() =>
                 onUpdate(note.id, editedTitle, editedContent)
                   .then(() => setIsEditing(false))
                   .catch((err) => console.error(err))
               }
             >
+              <SaveAll className="text-white"/>
               Save
             </button>
           </div>
@@ -227,15 +226,17 @@ const NoteItem = ({ note, onDelete, onUpdate }) => {
           <p className="mt-2">{note.content}</p>
           <div className="mt-4 flex gap-2">
             <button
-              className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 active:bg-yellow-700"
+              className="bg-yellow-700 text-white px-3 py-1 rounded hover:bg-yellow-600 active:bg-yellow-700"
               onClick={() => setIsEditing(true)}
             >
+              <Pencil className="text-white"/>
               Edit
             </button>
             <button
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
+              className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-600 active:bg-red-700"
               onClick={() => onDelete(note.id)}
             >
+              <Trash className="text-white"/>
               Delete
             </button>
           </div>
@@ -249,12 +250,7 @@ const NoteList = ({ notes, onUpdate, onDelete }) => {
   return (
     <section className="container py-8 mt-42">
       <h2 className="inline-flex items-center gap-2 text-2xl font-medium mb-6">
-        <img
-          src="/note.svg"
-          alt="note icon"
-          className="w-8 h-8"
-          draggable="false"
-        />
+        <NotebookPen />
         Saved Notes
       </h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -288,11 +284,12 @@ const showFormattedDate = (date) => {
 
 const noteSearch = (notes, query) => {
   return notes.filter((note) => {
-    return(
+    return (
       note.title.toLowerCase().includes(query.toLowerCase()) ||
       note.content.toLowerCase().includes(query.toLowerCase()) ||
-      showFormattedDate(note.created_at).toLowerCase().includes(query.toLowerCase())
-    )
-  })
-}
-
+      showFormattedDate(note.created_at)
+        .toLowerCase()
+        .includes(query.toLowerCase())
+    );
+  });
+};
